@@ -1,0 +1,6 @@
+name: CMSupport
+version: ${project.version}
+main: net.coralmc.cmsupport.Main
+depend: [ PlaceholderAPI ]
+authors: [ CoralMC ]
+description: Da soporte a tus creadores de contenido favoritos.

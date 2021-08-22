@@ -1,0 +1,30 @@
+settings:
+  title: 'Ayuda a tu creador de contenido'
+  rows: four
+
+items:
+  partner:
+    material: player_head
+    data: 3
+    skull: 'name-{partner}'
+    meta:
+      name: '&a{partner}'
+      lore:
+        - ' &8¡Ayuda a tu creador favorito!'
+        - ''
+        - ' &7Haz clic acá para ayudar a'
+        - ' &7{partner} en CoralMC.'
+        - ''
+        - ' &7Votos: &e{votes}'
+
+extraItems:
+  close:
+    material: barrier
+    slot: 31
+    meta:
+      name: '&cClose'
+      lore:
+        - ''
+        - '&7 Clic para cerrar'
+        - '&7 este menú.'
+        - ''
