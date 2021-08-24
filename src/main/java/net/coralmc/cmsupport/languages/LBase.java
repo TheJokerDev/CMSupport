@@ -9,7 +9,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public enum LBase implements TranslationPack {
-
+    ERROR_WHILE_CREATING_TABLES("Errors.CreateTable","Cannot create tables:"),
+    ERROR_WHILE_UPDATING_TABLES("Errors.UpdateTable","Cannot update tables:"),
+    ERROR_WHILE_DELETING_USER("Errors.DeleteUser","Couldn't delete user:"),
+    ERROR_WHILE_SAVING_USER_DATA("Errors.SaveUser","Error while saving {UserName}'s data:"),
+    ERROR_WHILE_HASHING_PASSWORD("Errors.HashPassword","Error while hashing password:"),
+    ERROR_ON_DATA_REQUEST("Errors.FailedRequest","Couldn't request data:"),
     NO_PERMISSION("Messages.NoPermission", "&cYou don't have permissions to do that!");
 
     private TranslationManager manager;

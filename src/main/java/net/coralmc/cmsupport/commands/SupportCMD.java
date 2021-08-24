@@ -1,6 +1,7 @@
 package net.coralmc.cmsupport.commands;
 
 import net.coralmc.cmsupport.Main;
+import net.coralmc.cmsupport.menus.SupportGUI;
 import org.bukkit.entity.Player;
 import xyz.theprogramsrc.supercoreapi.spigot.commands.CommandResult;
 import xyz.theprogramsrc.supercoreapi.spigot.commands.SpigotCommand;
@@ -14,11 +15,16 @@ public class SupportCMD extends SpigotCommand {
 
     @Override
     public CommandResult onPlayerExecute(Player player, String[] strings) {
-        return null;
+        if (strings.length == 0){
+            new SupportGUI(player);
+        } else {
+            return CommandResult.INVALID_ARGS;
+        }
+        return CommandResult.COMPLETED;
     }
 
     @Override
     public CommandResult onConsoleExecute(SpigotConsole spigotConsole, String[] strings) {
-        return null;
+        return CommandResult.NO_ACCESS;
     }
 }

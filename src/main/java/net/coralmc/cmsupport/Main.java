@@ -3,6 +3,7 @@ package net.coralmc.cmsupport;
 import net.coralmc.cmsupport.commands.SupportCMD;
 import net.coralmc.cmsupport.hooks.PlaceholderAPIHook;
 import net.coralmc.cmsupport.languages.LBase;
+import net.coralmc.cmsupport.listeners.LoginListener;
 import net.coralmc.cmsupport.storage.PartnerStorage;
 import net.coralmc.cmsupport.storage.UserStorage;
 import xyz.theprogramsrc.supercoreapi.global.files.yml.YMLConfig;
@@ -48,6 +49,10 @@ public final class Main extends SpigotPlugin {
             new SupportCMD();
             this.log("Registered '/" + getSettingsStorage().getConfig().getString("Settings.SupportCommand").toLowerCase() + "' command");
 
+            this.debug("Registering listeners...");
+            listener(new LoginListener());
+            this.debug("&aLoginListener successfully registered!");
+
             boolean papi = this.getSuperUtils().isPlugin("PlaceholderAPI");
 
             if(papi){
@@ -82,7 +87,11 @@ public final class Main extends SpigotPlugin {
     }
 
     public YMLConfig getMenuYML() {
-        return menuYML;
+        File file = new File(getDataFolder(), "menu.yml");
+        if (!file.exists()) {
+            saveResource("menu.yml", false);
+        }
+        return new YMLConfig(file);
     }
 
     private void setupSettings(){

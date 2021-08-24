@@ -1,21 +1,42 @@
 settings:
   title: 'Ayuda a tu creador de contenido'
   rows: four
+  onClickClose: false
+  clickSound:
+    enable: true
+    sound: UI_BUTTON_CLICK
+    volume: 10.0
+    pitch: 1.0
 
 items:
   partner:
-    material: player_head
-    data: 3
-    skull: 'name-{partner}'
-    meta:
-      name: '&a{partner}'
-      lore:
-        - ' &8¡Ayuda a tu creador favorito!'
-        - ''
-        - ' &7Haz clic acá para ayudar a'
-        - ' &7{partner} en CoralMC.'
-        - ''
-        - ' &7Votos: &e{votes}'
+    vote:
+      material: player_head
+      data: 3
+      skull: 'name-{partner}'
+      meta:
+        name: '&a{partner}'
+        lore:
+          - ' &8¡Ayuda a tu creador favorito!'
+          - ''
+          - ' &7Haz clic acá para ayudar a'
+          - ' &7{partner} en CoralMC.'
+          - ''
+          - ' &7Votos: &e{votes}'
+    voted:
+      material: player_head
+      data: 3
+      skull: 'name-{partner}'
+      meta:
+        name: '&c{partner}'
+        lore:
+          - ' &8¡Ayuda a tu creador favorito!'
+          - ''
+          - ' &7Ya votaste por este creador'
+          - ' &7de contenido en CoralMC.'
+          - ''
+          - ' &7Votos: &e{votes}'
+          - ' &7Voto realizado el: {voteDate}'
 
 extraItems:
   close:
@@ -28,3 +49,6 @@ extraItems:
         - '&7 Clic para cerrar'
         - '&7 este menú.'
         - ''
+    actions:
+      multiclick:
+        - '[close]'

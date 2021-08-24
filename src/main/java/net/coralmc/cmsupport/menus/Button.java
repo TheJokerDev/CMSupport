@@ -10,8 +10,10 @@ import net.coralmc.cmsupport.utils.visual.MinecraftColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import xyz.theprogramsrc.supercoreapi.global.files.yml.YMLConfig;
 import xyz.theprogramsrc.supercoreapi.global.utils.Utils;
 import xyz.theprogramsrc.supercoreapi.libs.simpleyaml.configuration.ConfigurationSection;
+import xyz.theprogramsrc.supercoreapi.libs.xseries.XSound;
 import xyz.theprogramsrc.supercoreapi.spigot.gui.objets.GuiAction;
 import xyz.theprogramsrc.supercoreapi.spigot.gui.objets.GuiEntry;
 
@@ -105,12 +107,42 @@ public class Button {
     }
 
     public GuiEntry getGUIEntry(){
-        return new GuiEntry(getIcon(), a->player.closeInventory());
+        return new GuiEntry(getIcon().build(), this::getActions);
+    }
+
+    private YMLConfig getFile(){
+        return Main.plugin.getMenuYML();
+    }
+
+    public void executeOnClick(){
+        if (getFile().getBoolean("settings.clickSound.enable")){
+            XSound sound;
+            String soundStr;
+            float volume;
+            float pitch;
+            if (getFile().get("settings.clickSound.sound") == null){
+                return;
+            }
+            soundStr = getFile().getString("settings.clickSound.sound");
+            try {
+                sound = XSound.valueOf(soundStr.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                //Cosmetics.log(1, "&cThe sound "+soundStr+" doesn't exist! Check and fix this error.");
+                return;
+            }
+            volume = getFile().getInt("settings.clickSound.volume");
+            pitch = getFile().getInt("settings.clickSound.pitch");
+            sound.play(player, volume, pitch);
+        }
+        if (getFile().getBoolean("settings.onClickClose")){
+            player.closeInventory();
+        }
     }
 
     private void getActions(GuiAction obj) {
         GuiAction.ClickType var1 = obj.clickType;
         Player p = player;
+        executeOnClick();
         Object actions = config.get("actions");
         boolean hasActions = actions != null;
         if (hasActions) {
