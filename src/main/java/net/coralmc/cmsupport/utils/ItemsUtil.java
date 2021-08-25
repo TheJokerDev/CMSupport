@@ -10,13 +10,15 @@ import xyz.theprogramsrc.supercoreapi.libs.simpleyaml.configuration.Configuratio
 import xyz.theprogramsrc.supercoreapi.libs.xseries.XEnchantment;
 import xyz.theprogramsrc.supercoreapi.libs.xseries.XMaterial;
 
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 public class ItemsUtil {
 
-    public static SimpleItem createItem(ConfigurationSection section, Player p) {
+    public static SimpleItem createItem(ConfigurationSection section, Player p){
+        return createItem(section, p, null);
+    }
+
+    public static SimpleItem createItem(ConfigurationSection section, Player p, HashMap<String, String> placeholders) {
         String[] var1;
         int int1 = 0;
         int int2 = 0;
@@ -76,6 +78,11 @@ public class ItemsUtil {
         }
         if (material == XMaterial.PLAYER_HEAD && hasSkullData) {
             skullData = section.getString("skull").replaceAll("%player_name%", p.getName());
+            if (placeholders!=null && !placeholders.isEmpty()){
+                for (Map.Entry<String, String> entry : placeholders.entrySet()){
+                    skullData = skullData.replace(entry.getKey(), entry.getValue());
+                }
+            }
             if (skullData.startsWith("base-")) {
                 skullData = skullData.replace("base-", "");
                 item.setItem(SkullUtils.getHead(skullData));
@@ -142,6 +149,12 @@ public class ItemsUtil {
             if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                 name = PlaceholderAPI.setPlaceholders(p, name);
             }
+
+            if (placeholders!=null && !placeholders.isEmpty()){
+                for (Map.Entry<String, String> entry : placeholders.entrySet()){
+                    name = name.replace(entry.getKey(), entry.getValue());
+                }
+            }
             item.setDisplayName(name);
         }
         if (hasLore) {
@@ -149,6 +162,15 @@ public class ItemsUtil {
             if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                 lore = PlaceholderAPI.setPlaceholders(p, lore);
             }
+
+            if (placeholders!=null && !placeholders.isEmpty()){
+                for (int i = 0; i<lore.size(); i++) {
+                    for (Map.Entry<String, String> entry : placeholders.entrySet()) {
+                        lore.set(i, lore.get(i).replace(entry.getKey(), entry.getValue()));
+                    }
+                }
+            }
+
             item.setLore(lore);
         }
         if (hasRemoveAttributes) {

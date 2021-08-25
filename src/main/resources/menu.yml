@@ -37,6 +37,11 @@ items:
           - ''
           - ' &7Votos: &e{votes}'
           - ' &7Voto realizado el: {voteDate}'
+    empty:
+      material: red_stained_glass_pane
+      data: 14
+      meta:
+        name: '&c¡No hay partners registrados!'
 
 extraItems:
   close:

@@ -94,7 +94,7 @@ public class UserStorage extends DataBaseStorage {
                 Statement s = c.createStatement();
                 ResultSet rs = s.executeQuery("SELECT * FROM " + this.table + " WHERE user_name='"+username+"';");
                 if(rs.next()){
-                    String votes = rs.getString("votes-");
+                    String votes = rs.getString("votes");
                     User user = new User(username)
                             .loadVotes(votes);
                     result.set(user);

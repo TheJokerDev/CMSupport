@@ -88,6 +88,14 @@
             <version>1.17.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot</artifactId>
+            <version>1.17.1-R0.1-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${user.home}/OneDrive - Ministerio de Educación, Gobierno de El Salvador/spigot-1.17.1.jar</systemPath>
+        </dependency>
         <dependency>
             <groupId>xyz.theprogramsrc</groupId>
             <artifactId>SuperCoreAPI</artifactId>

@@ -15,6 +15,20 @@ public enum LBase implements TranslationPack {
     ERROR_WHILE_SAVING_USER_DATA("Errors.SaveUser","Error while saving {UserName}'s data:"),
     ERROR_WHILE_HASHING_PASSWORD("Errors.HashPassword","Error while hashing password:"),
     ERROR_ON_DATA_REQUEST("Errors.FailedRequest","Couldn't request data:"),
+
+    ERROR_ON_ADD_PARTNER("Errors.AddPartner","&cCouldn't add that partner"),
+    ERROR_ON_REMOVE_PARTNER("Errors.RemovePartner","&cCouldn't remove that partner"),
+
+    USE_ADMIN_COMMAND("Messages.UseAdminCommand", "&cUse: /supportadmin partner add/remove <nick>."),
+
+    ADDED_PARTNER("Messages.AddedPartner", "&aPartner &eadded &asuccessfully!"),
+    PARTNER_EXIST("Messages.PartnerExist", "&cThat partner already exists!"),
+    REMOVED_PARTNER("Messages.RemovedPartner", "&aPartner &cremoved &asuccessfully!"),
+    PARTNER_NOT_EXIST("Messages.PartnerNotExist", "&cThat partner not exists!"),
+
+
+    ALREADY_VOTED("Messages.AlreadyVoted", "&cYou've already voted for a partner!"),
+    VOTED_SUCCESSFULLY("Messages.VotedSuccessfully", "&aVoted successfully for {partner}!"),
     NO_PERMISSION("Messages.NoPermission", "&cYou don't have permissions to do that!");
 
     private TranslationManager manager;

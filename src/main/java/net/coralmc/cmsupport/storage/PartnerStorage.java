@@ -21,6 +21,10 @@ public class PartnerStorage extends DataBaseStorage {
     public static HashMap<String, Partner> cache;
     private final String table;
 
+    public Partner[] getPartners(){
+        return cache.values().toArray(new Partner[0]);
+    }
+
     public Partner getPartner(String name){
         return this.get(name);
     }
@@ -32,6 +36,7 @@ public class PartnerStorage extends DataBaseStorage {
         table = getTablePrefix()+"partners";
         preloadTables();
     }
+
 
     public SuperPlugin<?> getPlugin() {
         return plugin;
@@ -70,15 +75,31 @@ public class PartnerStorage extends DataBaseStorage {
         }
     }
 
+    public void createUser(Partner user){
+        Runnable runnable = () -> {
+            cache.remove(user.getUsername());
+            this.dataBase.connect(c->{
+                try{
+                    saveUser(user, c);
+                    cache.put(user.getUsername(), user);
+                }catch (SQLException ex){
+                    this.plugin.addError(ex);
+                    this.plugin.log("&c" + LBase.ERROR_WHILE_SAVING_USER_DATA.options().vars(user.getUsername()).placeholder("{UserName}", user.getUsername()).toString());
+                    ex.printStackTrace();
+                }
+            });
+        };
+        new Thread(runnable).start();
+    }
+
     public void saveUser(Partner user, Connection c) throws SQLException{
         String username = user.getUsername();
         int votes = user.getVotes();
-        String lastUpdate = user.getLastUpdate().toString();
         Statement s = c.createStatement();
         if(!this.exists(username)){
-            s.executeUpdate("INSERT INTO " + this.table + " (user_name, votes, last_update) VALUES ('"+username+"', '"+votes+"', '"+lastUpdate+"');");
+            s.executeUpdate("INSERT INTO " + this.table + " (user_name, votes) VALUES ('"+username+"', '"+votes+"');");
         }else{
-            s.executeUpdate("UPDATE " + this.table + " SET votes='"+votes+", "+"last_update='"+lastUpdate+"';");
+            s.executeUpdate("UPDATE " + this.table + " SET votes='"+votes+"';");
         }
         s.close();
     }
@@ -100,7 +121,7 @@ public class PartnerStorage extends DataBaseStorage {
                 Statement s = c.createStatement();
                 ResultSet rs = s.executeQuery("SELECT * FROM " + this.table + " WHERE user_name='"+username+"';");
                 if(rs.next()){
-                    int votes = rs.getInt("votes-");
+                    int votes = rs.getInt("votes");
                     Partner user = new Partner(username)
                             .setVotes(votes)
                             .setLastUpdate(new Date());

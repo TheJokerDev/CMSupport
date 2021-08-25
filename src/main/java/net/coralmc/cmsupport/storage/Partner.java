@@ -1,5 +1,7 @@
 package net.coralmc.cmsupport.storage;
 
+import net.coralmc.cmsupport.Main;
+
 import java.util.Date;
 
 public class Partner {
@@ -23,6 +25,11 @@ public class Partner {
 
     public Date getLastUpdate() {
         return lastUpdate;
+    }
+
+    public void addVote(){
+        votes +=1;
+        Main.plugin.getPartnerStorage().save(this, true);
     }
 
     public Partner setVotes(int votes) {

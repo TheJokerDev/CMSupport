@@ -1,5 +1,6 @@
 package net.coralmc.cmsupport;
 
+import net.coralmc.cmsupport.commands.SupportAdminCMD;
 import net.coralmc.cmsupport.commands.SupportCMD;
 import net.coralmc.cmsupport.hooks.PlaceholderAPIHook;
 import net.coralmc.cmsupport.languages.LBase;
@@ -19,7 +20,6 @@ import java.io.File;
 
 public final class Main extends SpigotPlugin {
     private DataBase dataBase;
-    private YMLConfig menuYML;
     public static Main plugin;
     public ServerUtils serverUtils;
     public UserStorage userStorage;
@@ -48,6 +48,9 @@ public final class Main extends SpigotPlugin {
             this.debug("Registering commands...");
             new SupportCMD();
             this.log("Registered '/" + getSettingsStorage().getConfig().getString("Settings.SupportCommand").toLowerCase() + "' command");
+
+            new SupportAdminCMD();
+            this.log("Registered '/" + getSettingsStorage().getConfig().getString("Settings.SupportAdminCommand").toLowerCase() + "' command");
 
             this.debug("Registering listeners...");
             listener(new LoginListener());
@@ -94,13 +97,16 @@ public final class Main extends SpigotPlugin {
         return new YMLConfig(file);
     }
 
+    public static boolean allowedMultipleVotes(){
+        return plugin.getSettingsStorage().getConfig().getBoolean("Settings.MultipleVotes");
+    }
+
     private void setupSettings(){
 
         File file = new File(getDataFolder(), "menu.yml");
         if (!file.exists()) {
             saveResource("menu.yml", false);
         }
-        menuYML = new YMLConfig(file);
 
         final YMLConfig cfg = this.getSettingsStorage().getConfig();
         if(!cfg.contains("MySQL.Enabled") || !cfg.contains("MySQL.Host") || !cfg.contains("MySQL.Port") || !cfg.contains("MySQL.DataBase") || !cfg.contains("MySQL.UserName") || !cfg.contains("MySQL.Password") || !cfg.contains("MySQL.UseSSL")){
@@ -112,6 +118,8 @@ public final class Main extends SpigotPlugin {
             if(!cfg.contains("MySQL.Password")) cfg.add("MySQL.Password", Utils.randomPassword(16));
             if(!cfg.contains("MySQL.UseSSL")) cfg.add("MySQL.UseSSL", false);
             if(!cfg.contains("Settings.SupportCommand")) cfg.add("Settings.SupportCommand", "support");
+            if(!cfg.contains("Settings.SupportAdminCommand")) cfg.add("Settings.SupportAdminCommand", "supportadmin");
+            if(!cfg.contains("Settings.MultipleVotes")) cfg.add("Settings.MultipleVotes", false);
             if(this.isFirstStart()){
                 this.log("&cPlease fill in the MySQL Settings. If you're going to use SQLite you can ignore this message.");
                 this.log("&9Information: If the path 'MySQL.Password' doesn't exists, the plugin will generate a random password with 16 characters length");

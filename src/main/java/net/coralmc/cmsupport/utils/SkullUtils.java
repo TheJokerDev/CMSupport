@@ -2,10 +2,14 @@ package net.coralmc.cmsupport.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
+import net.coralmc.cmsupport.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import xyz.theprogramsrc.supercoreapi.libs.xseries.XMaterial;
 import xyz.theprogramsrc.supercoreapi.spigot.items.SimpleItem;
 import xyz.theprogramsrc.supercoreapi.spigot.utils.skintexture.SkinTexture;
@@ -13,6 +17,7 @@ import xyz.theprogramsrc.supercoreapi.spigot.utils.skintexture.SkinTexture;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -75,27 +80,33 @@ public class SkullUtils {
             try {
                 skinURL = getHeadValue(player.getName());
             } catch (Exception e) {
-                log(e.getMessage());
-                log("&c&lERROR: &7Loading Url from "+player.getName());
+                Main.plugin.sendConsoleMessage(e.getMessage());
+                Main.plugin.sendConsoleMessage("ERROR: Loading Url from "+player.getName());
             }
         }
-        ItemStack head = new ItemStack(XMaterial.PLAYER_HEAD.parseMaterial(), 1, (short)3);
+        ItemStack head = XMaterial.PLAYER_HEAD.parseItem();
         if (skinURL == null){
             return head;
         }
         cached.put(player.getName(), skinURL);
         return getHead(skinURL);
     }
-
-    private static void log(String msg){
-        Bukkit.getConsoleSender().sendMessage(ct(msg));
-    }
-    private static String ct(String msg){
-        return ChatColor.translateAlternateColorCodes('&', msg);
-    }
     @SuppressWarnings("deprecation")
     public static ItemStack getHead(String skinURL) {
-        return new SimpleItem(new SkinTexture(skinURL)).build();
+        ItemStack head = XMaterial.PLAYER_HEAD.parseItem();
+        ItemMeta headMeta = head.getItemMeta();
+        GameProfile profile = new GameProfile(UUID.randomUUID(), null);
+        profile.getProperties().put("textures", new Property("textures", skinURL));
+        Field profileField;
+        try {
+            profileField = headMeta.getClass().getDeclaredField("profile");
+            profileField.setAccessible(true);
+            profileField.set(headMeta, profile);
+        } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
+            e.printStackTrace();
+        }
+        head.setItemMeta(headMeta);
+        return head;
     }
     @SuppressWarnings("deprecation")
     public static ItemStack getHead(UUID uuid) {
@@ -107,11 +118,11 @@ public class SkullUtils {
             try {
                 skinURL = getHeadValue(player.getName());
             } catch (Exception e) {
-                log(e.getMessage());
-                log("&c&lERROR: &7Loading Url from UUID: "+uuid);
+                Main.plugin.sendConsoleMessage(e.getMessage());
+                Main.plugin.sendConsoleMessage("ERROR: Loading Url from UUID: "+uuid);
             }
         }
-        ItemStack head = new ItemStack(XMaterial.PLAYER_HEAD.parseMaterial(), 1, (short)3);
+        ItemStack head = XMaterial.PLAYER_HEAD.parseItem();
         if (skinURL == null){
             return head;
         }

@@ -28,8 +28,11 @@ public class User {
 
     public String getVotes(){
         StringBuilder sb = new StringBuilder();
+        if (votes.isEmpty()){
+            return null;
+        }
         for (Map.Entry<Partner, Date> entry : votes.entrySet()){
-            sb.append(entry.getKey().getUsername()+";"+entry.getValue().toString()+",");
+            sb.append(entry.getKey().getUsername()).append(";").append(entry.getValue().toString()).append(",");
         }
         return sb.toString();
     }
