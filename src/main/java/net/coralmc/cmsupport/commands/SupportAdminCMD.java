@@ -3,6 +3,7 @@ package net.coralmc.cmsupport.commands;
 import net.coralmc.cmsupport.Main;
 import net.coralmc.cmsupport.languages.LBase;
 import net.coralmc.cmsupport.storage.Partner;
+import net.coralmc.cmsupport.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import xyz.theprogramsrc.supercoreapi.spigot.commands.CommandResult;
@@ -24,9 +25,14 @@ public class SupportAdminCMD extends SpigotCommand {
 
     @Override
     public CommandResult onPlayerExecute(Player player, String[] strings) {
-        if (strings.length == 0){
-            Main.plugin.getSuperUtils().sendMessage(player, LBase.USE_ADMIN_COMMAND.get().translate());
-            return CommandResult.INVALID_ARGS;
+
+        if (strings.length == 1){
+            if (strings[0].equalsIgnoreCase("reload")){
+                Main.plugin.getSettingsStorage().getConfig().save();
+                Main.plugin.reloadConfig();
+                Main.plugin.getSuperUtils().sendMessage(player, "&aConfiguration files reloaded successfully!");
+                return CommandResult.COMPLETED;
+            }
         }
 
         if (strings.length == 3){
@@ -36,7 +42,7 @@ public class SupportAdminCMD extends SpigotCommand {
             Player t;
             Partner p1;
             if (arg2.equals("forceadd") || arg2.equals("forceremove")) {
-                p1 = new Partner(arg3).setLastUpdate(new Date());
+                p1 = new Partner(arg3).setResetDate(Utils.getResetDate(new Date()));
             } else {
                 t = Bukkit.getPlayer(arg3);
                 if (t == null) {
@@ -47,7 +53,7 @@ public class SupportAdminCMD extends SpigotCommand {
             }
 
             if (p1 == null){
-                p1 = new Partner(arg3).setLastUpdate(new Date());
+                p1 = new Partner(arg3).setResetDate(Utils.getResetDate(new Date()));
             }
 
             if (arg1.equals("partner")){
@@ -77,14 +83,20 @@ public class SupportAdminCMD extends SpigotCommand {
                 return CommandResult.INVALID_ARGS;
             }
         }
-        return CommandResult.COMPLETED;
+        Main.plugin.getSuperUtils().sendMessage(player, LBase.USE_ADMIN_COMMAND.get().translate());
+        return CommandResult.INVALID_ARGS;
     }
 
     @Override
     public CommandResult onConsoleExecute(SpigotConsole spigotConsole, String[] strings) {
-        if (strings.length == 0){
-            Main.plugin.getSuperUtils().sendMessage(spigotConsole.parseConsoleCommandSender(), LBase.USE_ADMIN_COMMAND.get().translate());
-            return CommandResult.INVALID_ARGS;
+
+        if (strings.length == 1){
+            if (strings[0].equalsIgnoreCase("reload")){
+                Main.plugin.getSettingsStorage().getConfig().load();
+                Main.plugin.getMenuYML().load();
+                Main.plugin.getSuperUtils().sendMessage(spigotConsole.parseConsoleCommandSender(), "&aConfiguration files reloaded successfully!");
+                return CommandResult.COMPLETED;
+            }
         }
         if (strings.length == 3){
             String arg1 = strings[0].toLowerCase();
@@ -93,7 +105,7 @@ public class SupportAdminCMD extends SpigotCommand {
             Player t;
             Partner p1;
             if (arg2.equals("forceadd") || arg2.equals("forceremove")) {
-                p1 = new Partner(arg3).setLastUpdate(new Date());
+                p1 = new Partner(arg3).setResetDate(Utils.getResetDate(new Date()));
             } else {
                 t = Bukkit.getPlayer(arg3);
                 if (t == null) {
@@ -130,6 +142,7 @@ public class SupportAdminCMD extends SpigotCommand {
                 return CommandResult.INVALID_ARGS;
             }
         }
-        return CommandResult.COMPLETED;
+        Main.plugin.getSuperUtils().sendMessage(spigotConsole.parseConsoleCommandSender(), LBase.USE_ADMIN_COMMAND.get().translate());
+        return CommandResult.INVALID_ARGS;
     }
 }

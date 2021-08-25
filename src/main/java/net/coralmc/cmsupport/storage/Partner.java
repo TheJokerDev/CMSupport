@@ -7,12 +7,12 @@ import java.util.Date;
 public class Partner {
     private String name;
     private int votes;
-    private Date lastUpdate;
+    private Date resetDate;
 
     public Partner(String name){
         this.name = name;
         votes = 0;
-        lastUpdate = new Date();
+        resetDate = null;
     }
 
     public String getUsername() {
@@ -23,8 +23,8 @@ public class Partner {
         return votes;
     }
 
-    public Date getLastUpdate() {
-        return lastUpdate;
+    public Date getResetDate() {
+        return resetDate;
     }
 
     public void addVote(){
@@ -34,11 +34,13 @@ public class Partner {
 
     public Partner setVotes(int votes) {
         this.votes = votes;
+        Main.plugin.getPartnerStorage().save(this, true);
         return this;
     }
 
-    public Partner setLastUpdate(Date lastUpdate) {
-        this.lastUpdate = lastUpdate;
+    public Partner setResetDate(Date date) {
+        this.resetDate = date;
+        Main.plugin.getPartnerStorage().save(this, true);
         return this;
     }
 }

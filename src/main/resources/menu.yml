@@ -37,6 +37,8 @@ items:
           - ''
           - ' &7Votos: &e{votes}'
           - ' &7Voto realizado el: {voteDate}'
+          - ''
+          - ' &7Puedes volver a votar en: &a{resetTimeLeft}'
     empty:
       material: red_stained_glass_pane
       data: 14

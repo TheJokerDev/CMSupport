@@ -118,6 +118,7 @@ public final class Main extends SpigotPlugin {
             if(!cfg.contains("MySQL.Password")) cfg.add("MySQL.Password", Utils.randomPassword(16));
             if(!cfg.contains("MySQL.UseSSL")) cfg.add("MySQL.UseSSL", false);
             if(!cfg.contains("Settings.SupportCommand")) cfg.add("Settings.SupportCommand", "support");
+            if(!cfg.contains("Settings.ResetVoteTime")) cfg.add("Settings.ResetVoteTime", "7d");
             if(!cfg.contains("Settings.SupportAdminCommand")) cfg.add("Settings.SupportAdminCommand", "supportadmin");
             if(!cfg.contains("Settings.MultipleVotes")) cfg.add("Settings.MultipleVotes", false);
             if(this.isFirstStart()){

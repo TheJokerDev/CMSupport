@@ -65,6 +65,20 @@ public class UserStorage extends DataBaseStorage {
         }
     }
 
+    public void resetVotesOfPartner(Partner partner){
+        Runnable runnable = () -> {
+            User[] users = requestUsers(true);
+            for (User u : users){
+                if (!u.getVotes().contains(partner.getUsername())){
+                    continue;
+                }
+                u.removePartnerVote(partner);
+            }
+        };
+
+        new Thread(runnable).start();
+    }
+
     public void saveUser(User user, Connection c) throws SQLException{
         String username = user.getUsername();
         String votes = user.getVotes();

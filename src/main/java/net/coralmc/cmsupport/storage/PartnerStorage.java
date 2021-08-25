@@ -1,15 +1,13 @@
 package net.coralmc.cmsupport.storage;
 
+import net.coralmc.cmsupport.Main;
 import net.coralmc.cmsupport.languages.LBase;
 import xyz.theprogramsrc.supercoreapi.SuperPlugin;
 import xyz.theprogramsrc.supercoreapi.global.storage.DataBase;
 import xyz.theprogramsrc.supercoreapi.global.storage.DataBaseStorage;
 import xyz.theprogramsrc.supercoreapi.global.utils.Utils;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -95,11 +93,19 @@ public class PartnerStorage extends DataBaseStorage {
     public void saveUser(Partner user, Connection c) throws SQLException{
         String username = user.getUsername();
         int votes = user.getVotes();
+        Date resetDate = user.getResetDate();
+        long date = 0;
+        if (resetDate == null){
+            user.setResetDate(net.coralmc.cmsupport.utils.Utils.getResetDate(new Date()));
+            resetDate = user.getResetDate();
+        }
+        date = resetDate.getTime();
         Statement s = c.createStatement();
         if(!this.exists(username)){
-            s.executeUpdate("INSERT INTO " + this.table + " (user_name, votes) VALUES ('"+username+"', '"+votes+"');");
+            s.executeUpdate("INSERT INTO " + this.table + " (user_name, votes, lastReset) VALUES ('"+username+"', '"+votes+"', '"+ new Date().getTime() +"');");
         }else{
-            s.executeUpdate("UPDATE " + this.table + " SET votes='"+votes+"';");
+            PreparedStatement statement = c.prepareStatement("UPDATE " + this.table + " SET votes=?, lastReset=?;");
+            //s.executeUpdate("UPDATE " + this.table + " SET votes='"+votes+"', lastReset='"+date+"';");
         }
         s.close();
     }
@@ -122,9 +128,13 @@ public class PartnerStorage extends DataBaseStorage {
                 ResultSet rs = s.executeQuery("SELECT * FROM " + this.table + " WHERE user_name='"+username+"';");
                 if(rs.next()){
                     int votes = rs.getInt("votes");
+                    long resetDate = rs.getLong("lastReset");
                     Partner user = new Partner(username)
-                            .setVotes(votes)
-                            .setLastUpdate(new Date());
+                            .setVotes(votes);
+
+                    if (resetDate!=0){
+                        user.setResetDate(new Date(resetDate));
+                    }
                     result.set(user);
                 }
                 rs.close();
@@ -156,9 +166,17 @@ public class PartnerStorage extends DataBaseStorage {
                         String username = rs.getString("user_name");
                         cache.remove(username);
                         int votes = rs.getInt("votes");
+                        long lastReset = 0;
+                        lastReset = rs.getLong("lastReset");
                         Partner user = new Partner(username)
-                                .setVotes(votes)
-                                .setLastUpdate(new Date());
+                                .setVotes(votes);
+                        if (lastReset != 0){
+                            user.setResetDate(new Date(lastReset));
+                            if (!new Date(lastReset).after(net.coralmc.cmsupport.utils.Utils.getResetDate(new Date(lastReset)))){
+                                user.setResetDate(net.coralmc.cmsupport.utils.Utils.getResetDate(new Date(lastReset)));
+                                Main.plugin.getUserStorage().resetVotesOfPartner(user);
+                            }
+                        }
                         cache.put(username, user);
                         users.add(user);
                     }
@@ -201,7 +219,7 @@ public class PartnerStorage extends DataBaseStorage {
         new Thread(() -> this.dataBase.connect(c->{
             try{
                 Statement s = c.createStatement();
-                s.executeUpdate("CREATE TABLE IF NOT EXISTS " + this.table + " (user_name VARCHAR(100), votes INT, last_update MEDIUMTEXT);");
+                s.executeUpdate("CREATE TABLE IF NOT EXISTS " + this.table + " (user_name VARCHAR(100), votes INT, last_update MEDIUMTEXT, lastReset LONG);");
                 s.close();
             }catch (SQLException ex){
                 this.plugin.addError(ex);

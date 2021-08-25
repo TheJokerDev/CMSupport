@@ -11,7 +11,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import xyz.theprogramsrc.supercoreapi.spigot.gui.Gui;
 import xyz.theprogramsrc.supercoreapi.spigot.gui.objets.*;
-import xyz.theprogramsrc.supercoreapi.spigot.utils.SpigotUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -70,26 +69,26 @@ public class SupportGUI extends Gui {
         HashMap<String, String> placeholders = new HashMap<>();
         placeholders.put("{partner}", partner.getUsername());
         placeholders.put("{votes}", partner.getVotes()+"");
-        placeholders.put("{voteDate}", Utils.getFormattedDate(user.getVotedTime(partner.getUsername())));
+        placeholders.put("{resetTimeLeft}", Utils.getReimainingTime(partner));
 
         if (user.getVotes().contains(partner.getUsername())) {
             isAllowed = false;
         }
-
         if (isAllowed){
             item = ItemsUtil.createItem(Main.plugin.getMenuYML().getSection("items.partner.vote"), player, placeholders).clone();
         } else {
+            placeholders.put("{voteDate}", Utils.getFormattedDate(user.getVotedTime(partner)));
             item = ItemsUtil.createItem(Main.plugin.getMenuYML().getSection("items.partner.voted"), player, placeholders).clone();
         }
 
 
         boolean finalIsAllowed = isAllowed;
-        return new GuiEntry(item.build(), l->executeAction(l, partner, user, finalIsAllowed));
+        return new GuiEntry(item.build(), l->executeAction(partner, user, finalIsAllowed));
     }
 
-    private void executeAction(GuiAction obj, Partner partner, User user, boolean allowed){
+    private void executeAction(Partner partner, User user, boolean allowed){
         if (allowed){
-            if (user.getVotes()!=null && !Main.allowedMultipleVotes()){
+            if (!user.getVotesHashMap().isEmpty() && !Main.allowedMultipleVotes()){
                 Main.plugin.getSuperUtils().sendMessage(Bukkit.getPlayer(user.getUsername()), LBase.ALREADY_VOTED.get().translate());
                 return;
             }
