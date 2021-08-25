@@ -69,9 +69,8 @@ public class SupportGUI extends Gui {
         HashMap<String, String> placeholders = new HashMap<>();
         placeholders.put("{partner}", partner.getUsername());
         placeholders.put("{votes}", partner.getVotes()+"");
-        placeholders.put("{resetTimeLeft}", Utils.getReimainingTime(partner));
 
-        if (user.getVotes().contains(partner.getUsername())) {
+        if (user.getVotes()!=null && user.getVotes().contains(partner.getUsername())) {
             isAllowed = false;
         }
         if (isAllowed){

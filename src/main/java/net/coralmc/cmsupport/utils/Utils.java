@@ -122,6 +122,7 @@ public class Utils {
     }
 
     private static Date getDate(Date date, int years, int months, int weeks, int days, int hours, int minutes, int seconds){
+        System.out.println("Modified date: "+date);
         years = date.getYear()+years;
         months = date.getMonth()+months;
         if (months > 12){
@@ -140,6 +141,7 @@ public class Utils {
         date.setMinutes(minutes);
         date.setSeconds(seconds);
 
+        System.out.println("Modified date: "+date);
         return date;
     }
 

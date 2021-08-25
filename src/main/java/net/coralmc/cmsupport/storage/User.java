@@ -19,7 +19,7 @@ public class User {
                 continue;
             }
             String[] var1 = s.split(";");
-            Partner partner = Main.plugin.getPartnerStorage().getPartner(var1[0]);
+            Partner partner = Main.plugin.getPartnerStorage().get(var1[0]);
             if (partner == null){
                 continue;
             }

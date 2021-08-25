@@ -35,6 +35,17 @@ public class SupportAdminCMD extends SpigotCommand {
             }
         }
 
+        if (strings.length == 2){
+            if (strings[0].equalsIgnoreCase("partner") && strings[1].equalsIgnoreCase("resetall")){
+                for (Partner partner : Main.plugin.getPartnerStorage().getPartners()) {
+                    Main.plugin.getUserStorage().resetVotesOfPartner(partner);
+                    partner.resetVotes();
+                }
+                Main.plugin.getSuperUtils().sendMessage(player, LBase.VOTES_RESET_ALL.get().translate());
+                return CommandResult.COMPLETED;
+            }
+        }
+
         if (strings.length == 3){
             String arg1 = strings[0].toLowerCase();
             String arg2 = strings[1].toLowerCase();
@@ -42,7 +53,7 @@ public class SupportAdminCMD extends SpigotCommand {
             Player t;
             Partner p1;
             if (arg2.equals("forceadd") || arg2.equals("forceremove")) {
-                p1 = new Partner(arg3).setResetDate(Utils.getResetDate(new Date()));
+                p1 = new Partner(arg3);
             } else {
                 t = Bukkit.getPlayer(arg3);
                 if (t == null) {
@@ -53,7 +64,7 @@ public class SupportAdminCMD extends SpigotCommand {
             }
 
             if (p1 == null){
-                p1 = new Partner(arg3).setResetDate(Utils.getResetDate(new Date()));
+                p1 = new Partner(arg3);
             }
 
             if (arg1.equals("partner")){
@@ -78,6 +89,16 @@ public class SupportAdminCMD extends SpigotCommand {
                         Main.plugin.getSuperUtils().sendMessage(player, LBase.REMOVED_PARTNER.get().translate());
                         return CommandResult.COMPLETED;
                     }
+                    case "reset":{
+                        if (!Main.plugin.getPartnerStorage().exists(p1.getUsername())){
+                            Main.plugin.getSuperUtils().sendMessage(player, LBase.PARTNER_NOT_EXIST.get().translate());
+                            return CommandResult.COMPLETED;
+                        }
+                        Main.plugin.getUserStorage().resetVotesOfPartner(p1);
+                        p1.resetVotes();
+                        Main.plugin.getSuperUtils().sendMessage(player, LBase.VOTES_RESET.get().translate());
+                        return CommandResult.COMPLETED;
+                    }
                 }
             } else {
                 return CommandResult.INVALID_ARGS;
@@ -98,6 +119,16 @@ public class SupportAdminCMD extends SpigotCommand {
                 return CommandResult.COMPLETED;
             }
         }
+        if (strings.length == 2){
+            if (strings[0].equalsIgnoreCase("partner") && strings[1].equalsIgnoreCase("resetall")){
+                for (Partner partner : Main.plugin.getPartnerStorage().getPartners()) {
+                    Main.plugin.getUserStorage().resetVotesOfPartner(partner);
+                    partner.resetVotes();
+                }
+                Main.plugin.getSuperUtils().sendMessage(spigotConsole.parseConsoleCommandSender(), LBase.VOTES_RESET_ALL.get().translate());
+                return CommandResult.COMPLETED;
+            }
+        }
         if (strings.length == 3){
             String arg1 = strings[0].toLowerCase();
             String arg2 = strings[1].toLowerCase();
@@ -105,7 +136,7 @@ public class SupportAdminCMD extends SpigotCommand {
             Player t;
             Partner p1;
             if (arg2.equals("forceadd") || arg2.equals("forceremove")) {
-                p1 = new Partner(arg3).setResetDate(Utils.getResetDate(new Date()));
+                p1 = new Partner(arg3);
             } else {
                 t = Bukkit.getPlayer(arg3);
                 if (t == null) {
@@ -135,6 +166,16 @@ public class SupportAdminCMD extends SpigotCommand {
                         }
                         Main.plugin.getPartnerStorage().remove(p1);
                         Main.plugin.getSuperUtils().sendMessage(spigotConsole.parseConsoleCommandSender(), LBase.REMOVED_PARTNER.get().translate());
+                        return CommandResult.COMPLETED;
+                    }
+                    case "reset":{
+                        if (!Main.plugin.getPartnerStorage().exists(p1.getUsername())){
+                            Main.plugin.getSuperUtils().sendMessage(spigotConsole.parseConsoleCommandSender(), LBase.PARTNER_NOT_EXIST.get().translate());
+                            return CommandResult.COMPLETED;
+                        }
+                        Main.plugin.getUserStorage().resetVotesOfPartner(p1);
+                        p1.resetVotes();
+                        Main.plugin.getSuperUtils().sendMessage(spigotConsole.parseConsoleCommandSender(), LBase.VOTES_RESET.get().translate());
                         return CommandResult.COMPLETED;
                     }
                 }

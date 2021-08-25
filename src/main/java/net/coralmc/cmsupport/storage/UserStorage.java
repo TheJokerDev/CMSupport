@@ -69,6 +69,9 @@ public class UserStorage extends DataBaseStorage {
         Runnable runnable = () -> {
             User[] users = requestUsers(true);
             for (User u : users){
+                if (u.getVotes() == null){
+                    continue;
+                }
                 if (!u.getVotes().contains(partner.getUsername())){
                     continue;
                 }

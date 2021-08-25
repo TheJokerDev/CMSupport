@@ -25,6 +25,8 @@ public enum LBase implements TranslationPack {
     PARTNER_EXIST("Messages.PartnerExist", "&cThat partner already exists!"),
     REMOVED_PARTNER("Messages.RemovedPartner", "&aPartner &cremoved &asuccessfully!"),
     PARTNER_NOT_EXIST("Messages.PartnerNotExist", "&cThat partner not exists!"),
+    VOTES_RESET("Messages.VotesReset", "&cVotes resseted for that partner!"),
+    VOTES_RESET_ALL("Messages.VotesResetAll", "&cVotes resseted for all partners!"),
 
 
     ALREADY_VOTED("Messages.AlreadyVoted", "&cYou've already voted for a partner!"),

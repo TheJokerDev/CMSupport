@@ -29,12 +29,16 @@ public class Partner {
 
     public void addVote(){
         votes +=1;
-        Main.plugin.getPartnerStorage().save(this, true);
+        Main.plugin.getPartnerStorage().save(this);
+    }
+
+    public void resetVotes(){
+        votes = 0;
+        Main.plugin.getPartnerStorage().save(this);
     }
 
     public Partner setVotes(int votes) {
         this.votes = votes;
-        Main.plugin.getPartnerStorage().save(this, true);
         return this;
     }
 

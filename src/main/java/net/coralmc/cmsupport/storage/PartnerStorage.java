@@ -20,7 +20,7 @@ public class PartnerStorage extends DataBaseStorage {
     private final String table;
 
     public Partner[] getPartners(){
-        return cache.values().toArray(new Partner[0]);
+        return requestPartners(false);
     }
 
     public Partner getPartner(String name){
@@ -79,7 +79,7 @@ public class PartnerStorage extends DataBaseStorage {
             this.dataBase.connect(c->{
                 try{
                     saveUser(user, c);
-                    cache.put(user.getUsername(), user);
+                    put(user);
                 }catch (SQLException ex){
                     this.plugin.addError(ex);
                     this.plugin.log("&c" + LBase.ERROR_WHILE_SAVING_USER_DATA.options().vars(user.getUsername()).placeholder("{UserName}", user.getUsername()).toString());
@@ -93,19 +93,11 @@ public class PartnerStorage extends DataBaseStorage {
     public void saveUser(Partner user, Connection c) throws SQLException{
         String username = user.getUsername();
         int votes = user.getVotes();
-        Date resetDate = user.getResetDate();
-        long date = 0;
-        if (resetDate == null){
-            user.setResetDate(net.coralmc.cmsupport.utils.Utils.getResetDate(new Date()));
-            resetDate = user.getResetDate();
-        }
-        date = resetDate.getTime();
         Statement s = c.createStatement();
         if(!this.exists(username)){
-            s.executeUpdate("INSERT INTO " + this.table + " (user_name, votes, lastReset) VALUES ('"+username+"', '"+votes+"', '"+ new Date().getTime() +"');");
+            s.executeUpdate("INSERT INTO " + this.table + " (user_name, votes) VALUES ('"+username+"', '"+votes+"');");
         }else{
-            PreparedStatement statement = c.prepareStatement("UPDATE " + this.table + " SET votes=?, lastReset=?;");
-            //s.executeUpdate("UPDATE " + this.table + " SET votes='"+votes+"', lastReset='"+date+"';");
+            s.executeUpdate("UPDATE " + this.table + " SET votes='"+votes+"';");
         }
         s.close();
     }
@@ -128,13 +120,8 @@ public class PartnerStorage extends DataBaseStorage {
                 ResultSet rs = s.executeQuery("SELECT * FROM " + this.table + " WHERE user_name='"+username+"';");
                 if(rs.next()){
                     int votes = rs.getInt("votes");
-                    long resetDate = rs.getLong("lastReset");
                     Partner user = new Partner(username)
                             .setVotes(votes);
-
-                    if (resetDate!=0){
-                        user.setResetDate(new Date(resetDate));
-                    }
                     result.set(user);
                 }
                 rs.close();
@@ -166,18 +153,9 @@ public class PartnerStorage extends DataBaseStorage {
                         String username = rs.getString("user_name");
                         cache.remove(username);
                         int votes = rs.getInt("votes");
-                        long lastReset = 0;
-                        lastReset = rs.getLong("lastReset");
                         Partner user = new Partner(username)
                                 .setVotes(votes);
-                        if (lastReset != 0){
-                            user.setResetDate(new Date(lastReset));
-                            if (!new Date(lastReset).after(net.coralmc.cmsupport.utils.Utils.getResetDate(new Date(lastReset)))){
-                                user.setResetDate(net.coralmc.cmsupport.utils.Utils.getResetDate(new Date(lastReset)));
-                                Main.plugin.getUserStorage().resetVotesOfPartner(user);
-                            }
-                        }
-                        cache.put(username, user);
+                        put(user);
                         users.add(user);
                     }
                     rs.close();
@@ -195,6 +173,10 @@ public class PartnerStorage extends DataBaseStorage {
             }
         }
         return new Partner[0];
+    }
+
+    private void put(Partner partner){
+        cache.put(partner.getUsername(), partner);
     }
 
     public boolean exists(String username){
@@ -219,7 +201,7 @@ public class PartnerStorage extends DataBaseStorage {
         new Thread(() -> this.dataBase.connect(c->{
             try{
                 Statement s = c.createStatement();
-                s.executeUpdate("CREATE TABLE IF NOT EXISTS " + this.table + " (user_name VARCHAR(100), votes INT, last_update MEDIUMTEXT, lastReset LONG);");
+                s.executeUpdate("CREATE TABLE IF NOT EXISTS " + this.table + " (user_name VARCHAR(100), votes INT);");
                 s.close();
             }catch (SQLException ex){
                 this.plugin.addError(ex);
