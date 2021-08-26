@@ -54,6 +54,9 @@ public class SupportGUI extends Gui {
             Partner[] partners = Main.plugin.getPartnerStorage().getPartners();
             int i = 10;
             for (Partner partner : partners){
+                if (i == 17 || i == 26 || i == 35){
+                    i+=2;
+                }
                 guiModel.setButton(i, getPartner(user, partner));
                 i++;
             }
